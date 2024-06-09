@@ -1,0 +1,61 @@
+trigger:
+- main  
+
+pool:
+  vmImage: 'windows-latest'  
+
+variables:
+  buildConfiguration: 'Release'
+  versionStampFile: 'VersionStamp.txt'
+  targetDirectory: 'C:\IT'
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.x'
+    addToPath: true
+
+- script: |
+    python -m venv venv
+    venv\Scripts\activate
+    pip install --upgrade pip
+    pip install -r requirements.txt
+  displayName: 'Install dependencies'
+
+- script: |
+    venv\Scripts\activate
+    pytest
+  displayName: 'Run tests'
+
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)'
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+- powershell: |
+    .\copyArtifacts.ps1 -buildArtifactStagingDirectory $(Build.ArtifactStagingDirectory) -targetDirectory $(targetDirectory) -versionStampFile $(versionStampFile)
+  displayName: 'Update and copy VersionStamp.txt'
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    replaceExistingArchive: true
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
+
+- task: SendMail@1
+  condition: succeededOrFailed()
+  inputs:
+    to: 'recipient@example.com'
+    subject: 'Build $(Build.BuildId) $(Build.Status)'
+    body: 'The build $(Build.BuildId) has $(Build.Status).'
+    attachLogs: true
+

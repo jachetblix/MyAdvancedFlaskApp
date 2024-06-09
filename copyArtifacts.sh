@@ -1,0 +1,21 @@
+#!/bin/bash
+
+BUILD_ARTIFACT_STAGING_DIRECTORY=$1
+TARGET_DIRECTORY=$2
+VERSION_STAMP_FILE=$3
+
+# Create target directory if it doesn't exist
+mkdir -p $TARGET_DIRECTORY
+
+# Copy artifacts
+cp -R $BUILD_ARTIFACT_STAGING_DIRECTORY/* $TARGET_DIRECTORY
+
+# Update version stamp
+VERSION_FILE_PATH="$TARGET_DIRECTORY/$VERSION_STAMP_FILE"
+if [ -f "$VERSION_FILE_PATH" ]; then
+    VERSION=$(cat $VERSION_FILE_PATH)
+    NEW_VERSION=$((VERSION + 1))
+else
+    NEW_VERSION=1
+fi
+echo $NEW_VERSION > $VERSION_FILE_PATH

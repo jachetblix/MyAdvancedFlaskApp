@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <div class="jumbotron mt-4">
+        <h1 class="display-4">Welcome to the Advanced Flask App!</h1>
+        {% if current_user.is_authenticated %}
+        <p class="lead">Hello, {{ current_user.username }}!</p>
+        {% else %}
+        <p class="lead">You are not logged in.</p>
+        <a class="btn btn-primary btn-lg" href="{{ url_for('main.login') }}" role="button">Login</a>
+        <a class="btn btn-secondary btn-lg" href="{{ url_for('main.register') }}" role="button">Register</a>
+        {% endif %}
+    </div>
+{% endblock %}
+
