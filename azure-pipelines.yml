@@ -8,6 +8,11 @@ variables:
   buildConfiguration: 'Release'
   versionStampFile: 'VersionStamp.txt'
   targetDirectory: 'C:\IT'
+  smtpServer: 'smtp.gmail.com'
+  smtpUsername: 'soldierwaat@gmail.com'
+  smtpPassword: '332696046Qq!A'
+  smtpFrom: 'soldierwaat@gmail.com'
+  smtpTo: 'artemegorov2517@example.com'
 
 steps:
 - task: UsePythonVersion@0
@@ -50,12 +55,22 @@ steps:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'drop'
     publishLocation: 'Container'
+- powershell: |
+    $smtpServer = '$(smtpServer)'
+    $smtpFrom = '$(smtpFrom)'
+    $smtpTo = '$(smtpTo)'
+    $smtpUsername = '$(smtpUsername)'
+    $smtpPassword = '$(smtpPassword)'
+    $messageSubject = "Build $(Build.BuildId) $(Build.Status)"
+    $messageBody = "The build $(Build.BuildId) has $(Build.Status)."
 
-- task: SendMail@1
-  condition: succeededOrFailed()
-  inputs:
-    to: 'soldierwaat@gmail.com'
-    subject: 'Build $(Build.BuildId) $(Build.Status)'
-    body: 'The build $(Build.BuildId) has $(Build.Status).'
-    attachLogs: true
-
+    $message = New-Object system.net.mail.mailmessage
+    $message.from = $smtpFrom
+    $message.To.add($smtpTo)
+    $message.Subject = $messageSubject
+    $message.Body = $messageBody
+    $smtp = New-Object Net.Mail.SmtpClient($smtpServer)
+    $smtp.Credentials = New-Object System.Net.NetworkCredential($smtpUsername, $smtpPassword)
+    $smtp.EnableSsl = $true
+    $smtp.Send($message)
+  displayName: 'Send email'
