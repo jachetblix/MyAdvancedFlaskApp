@@ -57,14 +57,10 @@ steps:
     version: '5.x'
     installationPath: $(Agent.ToolsDirectory)/dotnet
 
-- task: EmailNotification@1
+- task: SendEmail@1
   inputs:
-    to: 'artemegorvo2517@example.com'
-    subject: 'Build $(Build.BuildId) $(Build.Status)'
-    body: 'The build $(Build.BuildId) has $(Build.Status).'
-    smtpServer: 'smtp.gmail.com'
-    smtpPort: '587'
-    enableSsl: true
-    username: 'soldierwaat@gmail.com'
-    password: '332696046Qq!A'
-
+    To: 'artemegorov2517@gmail.com'
+    From: 'soldierwaat@gmail.com'
+    Subject: 'Build Status'
+    BodyAsHtml: false
+    AddAttachment: false
