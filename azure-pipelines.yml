@@ -9,6 +9,7 @@ variables:
   versionStampFile: 'VersionStamp.txt'
   targetDirectory: 'C:\\IT'
   smtpServer: 'smtp.gmail.com' 
+  smtpPort: 587
   smtpUsername: 'soldierwaat@gmail.com'
   smtpPassword: '332696046Qq!A'
   smtpFrom: 'soldierwaat@gmail.com'
