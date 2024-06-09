@@ -7,8 +7,8 @@ pool:
 variables:
   buildConfiguration: 'Release'
   versionStampFile: 'VersionStamp.txt'
-  targetDirectory: 'C:\IT'
-  smtpServer: 'smtp.gmail.com'
+  targetDirectory: 'C:\\IT'
+  smtpServer: 'smtp.gmail.com' 
   smtpUsername: 'soldierwaat@gmail.com'
   smtpPassword: '332696046Qq!A'
   smtpFrom: 'soldierwaat@gmail.com'
@@ -55,14 +55,17 @@ steps:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'drop'
     publishLocation: 'Container'
+
 - powershell: |
     $smtpServer = '$(smtpServer)'
     $smtpFrom = '$(smtpFrom)'
     $smtpTo = '$(smtpTo)'
     $smtpUsername = '$(smtpUsername)'
     $smtpPassword = '$(smtpPassword)'
-    $messageSubject = "Build $(Build.BuildId) $(Build.Status)"
-    $messageBody = "The build $(Build.BuildId) has $(Build.Status)."
+    $buildId = $env:BUILD_BUILDID
+    $buildStatus = $env:BUILD_BUILDSTATUS
+    $messageSubject = "Build $buildId $buildStatus"
+    $messageBody = "The build $buildId has $buildStatus."
 
     $message = New-Object system.net.mail.mailmessage
     $message.from = $smtpFrom
@@ -74,3 +77,4 @@ steps:
     $smtp.EnableSsl = $true
     $smtp.Send($message)
   displayName: 'Send email'
+
