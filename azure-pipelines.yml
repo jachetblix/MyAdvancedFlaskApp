@@ -1,19 +1,13 @@
 trigger:
-- main  
+- main  # Измените на нужную ветку
 
 pool:
-  vmImage: 'windows-latest'  
+  vmImage: 'windows-latest'  # Используем Windows для выполнения скриптов PowerShell
 
 variables:
   buildConfiguration: 'Release'
   versionStampFile: 'VersionStamp.txt'
   targetDirectory: 'C:\\IT'
-  smtpServer: 'smtp.gmail.com' 
-  smtpPort: 587
-  smtpUsername: 'soldierwaat@gmail.com'
-  smtpPassword: '332696046Qq!A'
-  smtpFrom: 'soldierwaat@gmail.com'
-  smtpTo: 'artemegorov2517@example.com'
 
 steps:
 - task: UsePythonVersion@0
@@ -57,25 +51,17 @@ steps:
     ArtifactName: 'drop'
     publishLocation: 'Container'
 
-- powershell: |
-    $smtpServer = '$(smtpServer)'
-    $smtpFrom = '$(smtpFrom)'
-    $smtpTo = '$(smtpTo)'
-    $smtpUsername = '$(smtpUsername)'
-    $smtpPassword = '$(smtpPassword)'
-    $buildId = $env:BUILD_BUILDID
-    $buildStatus = $env:BUILD_BUILDSTATUS
-    $messageSubject = "Build $buildId $buildStatus"
-    $messageBody = "The build $buildId has $buildStatus."
-
-    $message = New-Object system.net.mail.mailmessage
-    $message.from = $smtpFrom
-    $message.To.add($smtpTo)
-    $message.Subject = $messageSubject
-    $message.Body = $messageBody
-    $smtp = New-Object Net.Mail.SmtpClient($smtpServer)
-    $smtp.Credentials = New-Object System.Net.NetworkCredential($smtpUsername, $smtpPassword)
-    $smtp.EnableSsl = $true
-    $smtp.Send($message)
+- task: ms-devlabs.custom-2019-mail-task.SendEmail@1
   displayName: 'Send email'
+  inputs:
+    from: 'soldierwaat@gmail.com'
+    to: 'artemegorov2517@example.com'
+    subject: 'Build $(Build.BuildId) $(Build.Status)'
+    body: 'The build $(Build.BuildId) has $(Build.Status).'
+    smtpServer: 'smtp.gmail.com'
+    smtpPort: '587'
+    enableSsl: true
+    useAuthentication: true
+    username: 'soldierwaat@gmail.com'
+    password: '332696046Qq!A'
 
