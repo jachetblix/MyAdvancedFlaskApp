@@ -1,8 +1,8 @@
 trigger:
-- main  # Измените на нужную ветку
+- main  
 
 pool:
-  vmImage: 'windows-latest'  # Используем Windows для выполнения скриптов PowerShell
+  vmImage: 'windows-latest' 
 
 variables:
   buildConfiguration: 'Release'
@@ -57,10 +57,3 @@ steps:
     version: '5.x'
     installationPath: $(Agent.ToolsDirectory)/dotnet
 
-- task: SendEmail@1
-  inputs:
-    To: 'artemegorov2517@gmail.com'
-    From: 'soldierwaat@gmail.com'
-    Subject: 'Build Status'
-    BodyAsHtml: false
-    AddAttachment: false
