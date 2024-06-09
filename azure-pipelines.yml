@@ -54,7 +54,7 @@ steps:
 - task: SendMail@1
   condition: succeededOrFailed()
   inputs:
-    to: 'recipient@example.com'
+    to: 'soldierwaat@gmail.com'
     subject: 'Build $(Build.BuildId) $(Build.Status)'
     body: 'The build $(Build.BuildId) has $(Build.Status).'
     attachLogs: true
